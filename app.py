@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# --- CONFIGURACIÓN DE LA PÁGINA (Debe ser la primera instrucción) ---
+# --- CONFIGURACIÓN DE LA PÁGINA ---
 st.set_page_config(page_title="Control de Errores HIS", layout="wide", page_icon="🏥")
 
 # --- CONTROL DE ESTADO DE INICIO DE SESIÓN ---
@@ -11,89 +11,160 @@ if "logged_in" not in st.session_state:
 
 # --- PANTALLA DE LOGIN ---
 def login_screen():
-    # Tu imagen de GitHub (y un degradado azul por si la imagen no carga)
+    # Tu foto de fondo de GitHub
     fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpeg"
 
-    # CSS de alta fidelidad para un diseño moderno tipo "Glassmorphism"
+    # CSS Premium para lograr la tarjeta dividida (Split-Screen)
     st.markdown(
         f"""
         <style>
-        /* Fondo de pantalla con degradado premium y tu imagen encima */
+        /* Fondo difuminado detrás */
         .stApp {{
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            background-image: linear-gradient(rgba(15, 32, 39, 0.55), rgba(44, 83, 100, 0.55)), url("{fondo_url}");
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("{fondo_url}");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }}
         
-        /* Ocultar decoraciones innecesarias de Streamlit */
+        /* Ocultar decoraciones de Streamlit */
         header, footer, [data-testid="stHeader"] {{
             visibility: hidden;
         }}
         
-        /* Estilo premium para la tarjeta de login */
-        div[data-testid="stVerticalBlockBorderWrapper"] {{
-            background: rgba(255, 255, 255, 0.92) !important;
-            backdrop-filter: blur(12px) !important;
-            -webkit-backdrop-filter: blur(12px) !important;
-            border-radius: 20px !important;
-            border: 1px solid rgba(255, 255, 255, 0.25) !important;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45) !important;
-            padding: 35px 40px !important;
-            margin-top: 20px !important;
+        /* Contenedor de la Tarjeta Dividida */
+        .split-card {{
+            display: flex;
+            width: 800px;
+            height: 450px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.6);
+            margin: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
         }}
         
-        /* Estilos para textos dentro del Login */
-        .login-header {{
+        /* Lado Izquierdo (Turquesa con Logo) */
+        .left-side {{
+            width: 45%;
+            background-color: #2ebfa5; /* El color turquesa del ejemplo */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            color: white;
             text-align: center;
-            font-family: 'Inter', sans-serif;
-            font-weight: 800;
-            color: #1e3c72;
-            margin-bottom: 5px;
         }}
-        .login-subtitle {{
-            text-align: center;
-            color: #555555;
-            font-size: 14px;
+        
+        .left-side h1 {{
             font-family: 'Inter', sans-serif;
+            font-size: 42px !important;
+            font-weight: 800 !important;
+            margin: 0;
+            color: white !important;
+        }}
+        
+        .left-side p {{
+            font-size: 14px;
+            opacity: 0.9;
+            margin-top: 10px;
+        }}
+
+        .left-side .icon {{
+            font-size: 70px;
+            margin-top: 20px;
+        }}
+        
+        /* Lado Derecho (Formulario Oscuro) */
+        .right-side {{
+            width: 55%;
+            background-color: #1a2332; /* El color azul marino oscuro */
+            padding: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }}
+        
+        .right-side h2 {{
+            color: white !important;
+            font-family: 'Inter', sans-serif;
+            font-size: 28px !important;
+            margin-bottom: 5px !important;
+            font-weight: 400 !important;
+        }}
+        
+        .right-side p {{
+            color: #8b9bb4 !important;
+            font-size: 13px;
             margin-bottom: 25px;
         }}
         
-        /* Estilo para los textos de etiquetas "Usuario" y "Contraseña" */
+        /* Inputs estilizados en la tarjeta */
+        div[data-testid="stMarkdownContainer"] p {{
+            color: #8b9bb4 !important;
+        }}
+        
+        input {{
+            background-color: #121824 !important;
+            color: white !important;
+            border: 1px solid #2c374e !important;
+        }}
+        
         label {{
-            color: #1e3c72 !important;
-            font-weight: 600 !important;
+            color: #8b9bb4 !important;
+            text-transform: uppercase;
+            font-size: 11px !important;
+            letter-spacing: 1px;
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    # Diseño de columnas: desplazamos la tarjeta hacia la derecha de forma limpia
-    col_vacia, col_login = st.columns([1.6, 1])
+    # Renderizamos la estructura visual del lado izquierdo y contenedor general
+    st.markdown(
+        """
+        <div class="split-card">
+            <!-- Lado Izquierdo -->
+            <div class="left-side">
+                <h1>HIS</h1>
+                <div class="icon">🏥</div>
+                <p>Sistema de Control de Calidad e Inconsistencias</p>
+            </div>
+            <!-- Lado Derecho (se llena con Streamlit abajo) -->
+            <div class="right-side">
+                <h2>Iniciar Sesión</h2>
+                <p>Ingresa tus credenciales para acceder al panel</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Para meter los inputs reales de Streamlit exactamente encima del lado derecho:
+    # Creamos 3 columnas. La central contendrá el formulario flotante.
+    col_izq, col_centro, col_der = st.columns([1.1, 1, 0.9])
     
-    with col_login:
-        # Espacio para centrarlo verticalmente
-        st.markdown("<br><br><br>", unsafe_allow_html=True)
+    with col_centro:
+        # Espaciadores para calzar los inputs dentro de la caja oscura derecha
+        st.markdown("<br><br><br><br><br><br><br>", unsafe_allow_html=True)
         
-        # Usamos el contenedor con borde nativo que ahora tiene nuestro estilo CSS Premium
-        with st.container(border=True):
-            st.markdown("<h2 class='login-header'>🏥 Control HIS</h2>", unsafe_allow_html=True)
-            st.markdown("<p class='login-subtitle'>Panel de Control de Calidad y Errores</p>", unsafe_allow_html=True)
-            
-            username = st.text_input("Usuario", placeholder="ejemplo@correo.com", key="login_user")
-            password = st.text_input("Contraseña", type="password", placeholder="••••••••", key="login_pass")
-            
-            st.markdown("<br>", unsafe_allow_html=True)
-            
-            if st.button("Ingresar al Sistema", use_container_width=True, type="primary"):
-                if username == "admin" and password == "12345":
-                    st.session_state.logged_in = True
-                    st.success("¡Acceso concedido!")
-                    st.rerun()
-                else:
-                    st.error("Usuario o contraseña incorrectos.")
+        username = st.text_input("Usuario", placeholder="ejemplo@correo.com", key="login_user")
+        password = st.text_input("Contraseña", type="password", placeholder="••••••••", key="login_pass")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        if st.button("Iniciar Sesión", use_container_width=True, type="primary"):
+            if username == "admin" and password == "12345":
+                st.session_state.logged_in = True
+                st.success("¡Acceso concedido!")
+                st.rerun()
+            else:
+                st.error("Credenciales inválidas")
 
 # --- LÓGICA DE CONTROL DE ACCESO ---
 if not st.session_state.logged_in:
