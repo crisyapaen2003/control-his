@@ -12,9 +12,12 @@ if "logged_in" not in st.session_state:
 # --- PANTALLA DE LOGIN ---
 def login_screen():
     # Tu foto de fondo de GitHub
-    fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpeg"
+    fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpg"
+    
+    # URL de una imagen médica minimalista y elegante para el panel izquierdo (en color blanco)
+    imagen_medica_url = "https://cdn-icons-png.flaticon.com/512/3063/3063176.png"
 
-    # CSS de alta precisión para unir el diseño dividido sin desalineaciones
+    # CSS de alta precisión para unir el diseño con título arriba e imagen abajo en la zona verde
     st.markdown(
         f"""
         <style>
@@ -45,23 +48,30 @@ def login_screen():
             flex-direction: row !important;
         }}
         
-        /* Crear el panel izquierdo turquesa de forma dinámica */
+        /* Panel Izquierdo Turquesa Organizado (Título arriba, imagen abajo) */
         div[data-testid="stForm"]::before {{
-            content: "🏥\\A\\A HIS\\A\\A\\A Sistema de Control de Calidad e Inconsistencias";
+            content: "HIS\\A\\A Sistema de Control\\A de Calidad";
             white-space: pre-line;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Alinea el texto en la parte superior */
             text-align: center;
             width: 42%;
             background-color: #2ebfa5 !important;
             color: white !important;
             font-family: 'Inter', sans-serif;
             font-weight: 800;
-            font-size: 24px;
-            padding: 40px;
+            font-size: 26px;
+            padding: 40px 20px;
             box-sizing: border-box;
-            line-height: 1.4;
+            line-height: 1.3;
+            
+            /* Aquí inyectamos la imagen médica en la parte inferior del panel verde */
+            background-image: url("{imagen_medica_url}");
+            background-repeat: no-repeat;
+            background-position: center 80%; /* Centrado horizontalmente y al 80% del alto */
+            background-size: 110px !important; /* Tamaño óptimo para que no tape el texto */
         }}
         
         /* Ajustar el contenedor de inputs para que ocupe el lado derecho */
@@ -71,7 +81,7 @@ def login_screen():
             box-sizing: border-box;
         }}
         
-        /* Estilizar títulos */
+        /* Estilizar títulos del panel derecho */
         .login-title-custom {{
             color: white !important;
             font-family: 'Inter', sans-serif;
@@ -122,7 +132,7 @@ def login_screen():
         unsafe_allow_html=True
     )
 
-    # El formulario ahora integra de forma nativa todo el bloque
+    # El formulario integra nativamente el bloque derecho
     with st.form("login_form"):
         st.markdown("<h2 class='login-title-custom'>Iniciar Sesión</h2>", unsafe_allow_html=True)
         st.markdown("<p class='login-subtitle-custom'>Ingresa tus credenciales para acceder al panel</p>", unsafe_allow_html=True)
