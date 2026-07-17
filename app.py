@@ -7,12 +7,12 @@ st.set_page_config(page_title="Control HIS - Login", page_icon="🔒", layout="w
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# --- FUNCIÓN PARA LA PANTALLA DE LOGIN ---
+# --- FUNCIÓN PARA LA PANTALLA DE LOGIN CON DISEÑO CORREGIDO ---
 def login_screen():
-    # Tu imagen de GitHub
-    fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpeg"
+    # Tu imagen de GitHub para el fondo
+    fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpg"
 
-    # Inyectamos el CSS para el fondo y para ocultar las cabeceras de Streamlit
+    # CSS para el fondo de pantalla y para estilizar la caja de login
     st.markdown(
         f"""
         <style>
@@ -24,54 +24,75 @@ def login_screen():
             background-attachment: fixed;
         }}
         
-        /* Quitamos las decoraciones por defecto de Streamlit arriba */
+        /* Ocultar elementos predeterminados de Streamlit que no necesitamos */
         header, footer, [data-testid="stHeader"] {{
             visibility: hidden;
+        }}
+        
+        /* Estilo para la tarjeta de login blanca y sólida */
+        div[data-testid="stVerticalBlock"] > div > div > div[data-testid="stVerticalBlock"] {{
+            background-color: white !important; /* Fondo blanco sólido */
+            padding: 40px !important;
+            border-radius: 15px !important;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.4) !important; /* Sombra para dar profundidad */
+            width: 450px !important; /* Ancho de la caja */
+            margin-right: 100px !important; /* Margen derecho para separarlo un poco del borde */
+            display: block !important;
+        }}
+        
+        /* Asegurar que el título sea visible y de color oscuro */
+        .login-title {{
+            color: #0F52BA !important;
+            text-align: center;
+            margin-bottom: 20px;
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    # Creamos columnas: una muy ancha a la izquierda y una más pequeña a la derecha
-    # Esto empuja TODO el login hacia la derecha de manera limpia y responsiva
-    col_vacia, col_login = st.columns([1.8, 1])
+    # Lógica de columnas para mover la caja a la derecha
+    # Ajustamos la proporción para que el login tenga un buen tamaño
+    col_vacia, col_login = st.columns([1.5, 1])
     
     with col_login:
-        # Añadimos un par de espacios para que el login no quede tan pegado arriba
-        st.write("#")
-        st.write("#")
+        # Añadimos espacios en blanco arriba para bajar la caja un poco
+        st.markdown("<br><br><br>", unsafe_allow_html=True)
         
-        # Usamos el contenedor nativo con borde para crear la "tarjeta"
-        with st.container(border=True):
-            # Título bonito dentro de la tarjeta
-            st.markdown("<h2 style='text-align: center; color: #0F52BA; margin-bottom: 0px;'>🔑 Control HIS</h2>", unsafe_allow_html=True)
-            st.markdown("<p style='text-align: center; color: #555; font-size: 14px;'>Ingresa al panel administrativo</p>", unsafe_allow_html=True)
+        # Todo este bloque se renderizará dentro de la tarjeta blanca estilizada por el CSS de arriba
+        with st.container():
+            # Título principal con icono
+            st.markdown("<h2 class='login-title'>🔑 Control HIS</h2>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center; color: #333; font-size: 16px;'>Ingresa al panel administrativo</p>", unsafe_allow_html=True)
             st.write("---")
             
-            # Los campos quedan perfectamente contenidos aquí dentro
-            username = st.text_input("Usuario", placeholder="ejemplo@correo.com")
-            password = st.text_input("Contraseña", type="password", placeholder="••••••••")
+            # Campos de entrada de texto
+            # Usamos claves únicas para asegurar que Streamlit los rastree correctamente
+            username = st.text_input("Usuario", placeholder="ejemplo@correo.com", key="login_user")
+            password = st.text_input("Contraseña", type="password", placeholder="••••••••", key="login_pass")
             
-            st.write("")
+            st.write("") # Un poco de espacio antes del botón
             
-            # Botón de ingreso que ocupa el ancho de la tarjeta
+            # Botón de ingreso que ocupa todo el ancho de la tarjeta
             if st.button("Ingresar", use_container_width=True, type="primary"):
+                # Credenciales de prueba
                 if username == "admin" and password == "12345":
                     st.session_state.logged_in = True
                     st.success("¡Bienvenido!")
-                    st.rerun()
+                    st.rerun() # Recarga la página para mostrar el contenido principal
                 else:
-                    st.error("Credenciales inválidas")
+                    st.error("Credenciales inválidas. Por favor, inténtalo de nuevo.")
 
 # --- LÓGICA DE ACCESO ---
 if not st.session_state.logged_in:
     login_screen()
 else:
-    # --- AQUÍ EMPIEZA EL CONTENIDO DE TU APP ACTUAL ---
+    # --- AQUÍ EMPIEZA EL CONTENIDO DE TU APLICACIÓN ---
     st.title("📊 Panel de Control HIS")
-    st.write("¡Has iniciado sesión con éxito!")
+    st.write("¡Has iniciado sesión con éxito! Bienvenido al sistema.")
+    st.write("Aquí irán tus tablas, gráficos y formularios.")
     
+    # Botón para cerrar sesión en la barra lateral
     if st.sidebar.button("Cerrar Sesión"):
         st.session_state.logged_in = False
         st.rerun()
