@@ -10,7 +10,7 @@ if "logged_in" not in st.session_state:
 # --- FUNCIÓN PARA LA PANTALLA DE LOGIN CON DISEÑO CORREGIDO ---
 def login_screen():
     # Tu imagen de GitHub para el fondo
-    fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpg"
+    fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpeg"
 
     # CSS para el fondo de pantalla y para estilizar la caja de login
     st.markdown(
