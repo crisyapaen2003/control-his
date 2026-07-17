@@ -14,151 +14,127 @@ def login_screen():
     # Tu foto de fondo de GitHub
     fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpeg"
 
-    # CSS Premium para lograr la tarjeta dividida (Split-Screen)
+    # CSS de alta precisión para unir el diseño dividido sin desalineaciones
     st.markdown(
         f"""
         <style>
-        /* Fondo difuminado detrás */
+        /* Fondo de pantalla con overlay oscuro */
         .stApp {{
-            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("{fondo_url}");
+            background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url("{fondo_url}");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }}
         
-        /* Ocultar decoraciones de Streamlit */
+        /* Ocultar elementos nativos de Streamlit */
         header, footer, [data-testid="stHeader"] {{
             visibility: hidden;
         }}
         
-        /* Contenedor de la Tarjeta Dividida */
-        .split-card {{
-            display: flex;
-            width: 800px;
-            height: 450px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.6);
-            margin: auto;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
+        /* Contenedor principal del Login */
+        div[data-testid="stForm"] {{
+            background-color: #1a2332 !important; /* Lado derecho oscuro */
+            border: none !important;
+            border-radius: 20px !important;
+            box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.65) !important;
+            max-width: 850px !important;
+            margin: 80px auto 0px auto !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            display: flex !important;
+            flex-direction: row !important;
         }}
         
-        /* Lado Izquierdo (Turquesa con Logo) */
-        .left-side {{
-            width: 45%;
-            background-color: #2ebfa5; /* El color turquesa del ejemplo */
+        /* Crear el panel izquierdo turquesa de forma dinámica */
+        div[data-testid="stForm"]::before {{
+            content: "🏥\\A\\A HIS\\A\\A\\A Sistema de Control de Calidad e Inconsistencias";
+            white-space: pre-line;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 40px;
-            color: white;
-            text-align: center;
-        }}
-        
-        .left-side h1 {{
-            font-family: 'Inter', sans-serif;
-            font-size: 42px !important;
-            font-weight: 800 !important;
-            margin: 0;
-            color: white !important;
-        }}
-        
-        .left-side p {{
-            font-size: 14px;
-            opacity: 0.9;
-            margin-top: 10px;
-        }}
-
-        .left-side .icon {{
-            font-size: 70px;
-            margin-top: 20px;
-        }}
-        
-        /* Lado Derecho (Formulario Oscuro) */
-        .right-side {{
-            width: 55%;
-            background-color: #1a2332; /* El color azul marino oscuro */
-            padding: 45px;
-            display: flex;
-            flex-direction: column;
             justify-content: center;
-        }}
-        
-        .right-side h2 {{
+            text-align: center;
+            width: 42%;
+            background-color: #2ebfa5 !important;
             color: white !important;
             font-family: 'Inter', sans-serif;
-            font-size: 28px !important;
-            margin-bottom: 5px !important;
-            font-weight: 400 !important;
+            font-weight: 800;
+            font-size: 24px;
+            padding: 40px;
+            box-sizing: border-box;
+            line-height: 1.4;
         }}
         
-        .right-side p {{
+        /* Ajustar el contenedor de inputs para que ocupe el lado derecho */
+        div[data-testid="stForm"] > div[data-testid="stVerticalBlock"] {{
+            width: 58% !important;
+            padding: 40px !important;
+            box-sizing: border-box;
+        }}
+        
+        /* Estilizar títulos */
+        .login-title-custom {{
+            color: white !important;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            margin-top: 0px;
+            margin-bottom: 5px;
+            font-size: 28px;
+        }}
+        .login-subtitle-custom {{
             color: #8b9bb4 !important;
             font-size: 13px;
             margin-bottom: 25px;
         }}
         
-        /* Inputs estilizados en la tarjeta */
-        div[data-testid="stMarkdownContainer"] p {{
+        /* Estilo de los Inputs */
+        div[data-testid="stForm"] label p {{
             color: #8b9bb4 !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            font-size: 11px !important;
+            letter-spacing: 0.8px;
         }}
         
-        input {{
+        div[data-testid="stForm"] input {{
             background-color: #121824 !important;
             color: white !important;
             border: 1px solid #2c374e !important;
+            border-radius: 8px !important;
         }}
         
-        label {{
-            color: #8b9bb4 !important;
-            text-transform: uppercase;
-            font-size: 11px !important;
-            letter-spacing: 1px;
+        /* Estilo del Botón de Ingreso (Turquesa a juego) */
+        div[data-testid="stForm"] button {{
+            background-color: #2ebfa5 !important;
+            color: white !important;
+            border: none !important;
+            font-weight: bold !important;
+            padding: 10px 0 !important;
+            border-radius: 8px !important;
+            transition: all 0.3s ease;
+        }}
+        
+        div[data-testid="stForm"] button:hover {{
+            background-color: #25a38c !important;
+            box-shadow: 0px 4px 15px rgba(46, 191, 165, 0.4) !important;
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    # Renderizamos la estructura visual del lado izquierdo y contenedor general
-    st.markdown(
-        """
-        <div class="split-card">
-            <!-- Lado Izquierdo -->
-            <div class="left-side">
-                <h1>HIS</h1>
-                <div class="icon">🏥</div>
-                <p>Sistema de Control de Calidad e Inconsistencias</p>
-            </div>
-            <!-- Lado Derecho (se llena con Streamlit abajo) -->
-            <div class="right-side">
-                <h2>Iniciar Sesión</h2>
-                <p>Ingresa tus credenciales para acceder al panel</p>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Para meter los inputs reales de Streamlit exactamente encima del lado derecho:
-    # Creamos 3 columnas. La central contendrá el formulario flotante.
-    col_izq, col_centro, col_der = st.columns([1.1, 1, 0.9])
-    
-    with col_centro:
-        # Espaciadores para calzar los inputs dentro de la caja oscura derecha
-        st.markdown("<br><br><br><br><br><br><br>", unsafe_allow_html=True)
+    # El formulario ahora integra de forma nativa todo el bloque
+    with st.form("login_form"):
+        st.markdown("<h2 class='login-title-custom'>Iniciar Sesión</h2>", unsafe_allow_html=True)
+        st.markdown("<p class='login-subtitle-custom'>Ingresa tus credenciales para acceder al panel</p>", unsafe_allow_html=True)
         
-        username = st.text_input("Usuario", placeholder="ejemplo@correo.com", key="login_user")
-        password = st.text_input("Contraseña", type="password", placeholder="••••••••", key="login_pass")
+        username = st.text_input("Usuario", placeholder="ejemplo@correo.com")
+        password = st.text_input("Contraseña", type="password", placeholder="••••••••")
         
         st.markdown("<br>", unsafe_allow_html=True)
         
-        if st.button("Iniciar Sesión", use_container_width=True, type="primary"):
+        submit_button = st.form_submit_button("INICIAR SESIÓN", use_container_width=True)
+        
+        if submit_button:
             if username == "admin" and password == "12345":
                 st.session_state.logged_in = True
                 st.success("¡Acceso concedido!")
