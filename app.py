@@ -11,71 +11,89 @@ if "logged_in" not in st.session_state:
 
 # --- PANTALLA DE LOGIN ---
 def login_screen():
-    # Tu imagen de GitHub para el fondo
+    # Tu imagen de GitHub (y un degradado azul por si la imagen no carga)
     fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpg"
 
-    # CSS para el fondo de pantalla y para estilizar la caja de login blanca
+    # CSS de alta fidelidad para un diseño moderno tipo "Glassmorphism"
     st.markdown(
         f"""
         <style>
-        /* Fondo de pantalla completo */
+        /* Fondo de pantalla con degradado premium y tu imagen encima */
         .stApp {{
-            background-image: url("{fondo_url}");
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            background-image: linear-gradient(rgba(15, 32, 39, 0.55), rgba(44, 83, 100, 0.55)), url("{fondo_url}");
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }}
         
-        /* Ocultar elementos predeterminados de Streamlit en login */
+        /* Ocultar decoraciones innecesarias de Streamlit */
         header, footer, [data-testid="stHeader"] {{
             visibility: hidden;
         }}
         
-        /* Estilo para la tarjeta de login blanca y sólida */
-        div[data-testid="stVerticalBlock"] > div > div > div[data-testid="stVerticalBlock"] {{
-            background-color: white !important; /* Fondo blanco sólido */
-            padding: 40px !important;
-            border-radius: 15px !important;
-            box-shadow: 0px 10px 25px rgba(0,0,0,0.4) !important;
-            width: 450px !important;
-            margin-right: 100px !important;
-            display: block !important;
+        /* Estilo premium para la tarjeta de login */
+        div[data-testid="stVerticalBlockBorderWrapper"] {{
+            background: rgba(255, 255, 255, 0.92) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            border-radius: 20px !important;
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45) !important;
+            padding: 35px 40px !important;
+            margin-top: 20px !important;
         }}
         
-        /* Asegurar que el título sea visible y de color oscuro */
-        .login-title {{
-            color: #0F52BA !important;
+        /* Estilos para textos dentro del Login */
+        .login-header {{
             text-align: center;
-            margin-bottom: 20px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            color: #1e3c72;
+            margin-bottom: 5px;
+        }}
+        .login-subtitle {{
+            text-align: center;
+            color: #555555;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 25px;
+        }}
+        
+        /* Estilo para los textos de etiquetas "Usuario" y "Contraseña" */
+        label {{
+            color: #1e3c72 !important;
+            font-weight: 600 !important;
         }}
         </style>
         """,
         unsafe_allow_html=True
     )
 
-    # Columnas para mover el login a la derecha
-    col_vacia, col_login = st.columns([1.5, 1])
+    # Diseño de columnas: desplazamos la tarjeta hacia la derecha de forma limpia
+    col_vacia, col_login = st.columns([1.6, 1])
     
     with col_login:
+        # Espacio para centrarlo verticalmente
         st.markdown("<br><br><br>", unsafe_allow_html=True)
         
-        with st.container():
-            st.markdown("<h2 class='login-title'>🔑 Control HIS</h2>", unsafe_allow_html=True)
-            st.markdown("<p style='text-align: center; color: #333; font-size: 16px;'>Ingresa al panel administrativo</p>", unsafe_allow_html=True)
-            st.write("---")
+        # Usamos el contenedor con borde nativo que ahora tiene nuestro estilo CSS Premium
+        with st.container(border=True):
+            st.markdown("<h2 class='login-header'>🏥 Control HIS</h2>", unsafe_allow_html=True)
+            st.markdown("<p class='login-subtitle'>Panel de Control de Calidad y Errores</p>", unsafe_allow_html=True)
             
             username = st.text_input("Usuario", placeholder="ejemplo@correo.com", key="login_user")
             password = st.text_input("Contraseña", type="password", placeholder="••••••••", key="login_pass")
             
-            st.write("")
+            st.markdown("<br>", unsafe_allow_html=True)
             
-            if st.button("Ingresar", use_container_width=True, type="primary"):
+            if st.button("Ingresar al Sistema", use_container_width=True, type="primary"):
                 if username == "admin" and password == "12345":
                     st.session_state.logged_in = True
-                    st.success("¡Bienvenido!")
+                    st.success("¡Acceso concedido!")
                     st.rerun()
                 else:
-                    st.error("Credenciales inválidas. Por favor, inténtalo de nuevo.")
+                    st.error("Usuario o contraseña incorrectos.")
 
 # --- LÓGICA DE CONTROL DE ACCESO ---
 if not st.session_state.logged_in:
