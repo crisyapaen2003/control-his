@@ -12,7 +12,7 @@ if "logged_in" not in st.session_state:
 # --- PANTALLA DE LOGIN ---
 def login_screen():
     # Tu imagen de GitHub (y un degradado azul por si la imagen no carga)
-    fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpg"
+    fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpeg"
 
     # CSS de alta fidelidad para un diseño moderno tipo "Glassmorphism"
     st.markdown(
