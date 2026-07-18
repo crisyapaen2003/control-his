@@ -11,7 +11,7 @@ if "logged_in" not in st.session_state:
 
 # --- BASE DE DATOS DE USUARIOS---
 USUARIOS_PERMITIDOS = {
-    "admin": {"password": "12345", "nombre": "Administrador del Sistema"},
+    "admin": {"password": "12345", "nombre": "Cristopher Palacios"},
     "auditor1": {"password": "salud2026", "nombre": "Dra. Ana Martínez"},
     "supervisor": {"password": "his_control", "nombre": "Ing. Luis Benites"},
     "carlos.medina": {"password": "medico99", "nombre": "Dr. Carlos Medina"}
