@@ -5,19 +5,27 @@ import plotly.express as px
 # --- CONFIGURACIÓN DE LA PÁGINA ---
 st.set_page_config(page_title="Control de Errores HIS", layout="wide", page_icon="🏥")
 
-# --- CONTROL DE ESTADO DE INICIO DE SESIÓN ---
+# --- INICIO DE SESIÓN ---
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
+# --- BASE DE DATOS DE USUARIOS---
+USUARIOS_PERMITIDOS = {
+    "admin": {"password": "12345", "nombre": "Administrador del Sistema"},
+    "auditor1": {"password": "salud2026", "nombre": "Dra. Ana Martínez"},
+    "supervisor": {"password": "his_control", "nombre": "Ing. Luis Benites"},
+    "carlos.medina": {"password": "medico99", "nombre": "Dr. Carlos Medina"}
+}
+
 # --- PANTALLA DE LOGIN ---
 def login_screen():
-    # Tu foto de fondo de GitHub
-    fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpg"
+    # foto de fondo de GitHub
+    fondo_url = "https://raw.githubusercontent.com/crisyapaen2003/control-his/main/fondo.jpeg"
     
-    # URL de una imagen médica minimalista y elegante para el panel izquierdo (en color blanco)
+    # URL de una imagen médica
     imagen_medica_url = "https://cdn-icons-png.flaticon.com/512/3063/3063176.png"
 
-    # CSS de alta precisión para unir el diseño con título arriba e imagen abajo en la zona verde
+    # CSS 
     st.markdown(
         f"""
         <style>
@@ -132,7 +140,7 @@ def login_screen():
         unsafe_allow_html=True
     )
 
-    # El formulario integra nativamente el bloque derecho
+    # formulario -bloque derecho
     with st.form("login_form"):
         st.markdown("<h2 class='login-title-custom'>Iniciar Sesión</h2>", unsafe_allow_html=True)
         st.markdown("<p class='login-subtitle-custom'>Ingresa tus credenciales para acceder al panel</p>", unsafe_allow_html=True)
@@ -145,27 +153,37 @@ def login_screen():
         submit_button = st.form_submit_button("INICIAR SESIÓN", use_container_width=True)
         
         if submit_button:
-            if username == "admin" and password == "12345":
+            # Validamos si el usuario existe en nuestra nueva estructura
+            if username in USUARIOS_PERMITIDOS and USUARIOS_PERMITIDOS[username]["password"] == password:
                 st.session_state.logged_in = True
+                # 👇 AQUÍ GUARDAMOS EL NOMBRE REAL EN LUGAR DEL USUARIO
+                st.session_state.nombre_usuario = USUARIOS_PERMITIDOS[username]["nombre"]
                 st.success("¡Acceso concedido!")
                 st.rerun()
             else:
                 st.error("Credenciales inválidas")
 
-# --- LÓGICA DE CONTROL DE ACCESO ---
+# --CONTROL DE ACCESO ---
 if not st.session_state.logged_in:
     login_screen()
 else:
     # --- MENÚ LATERAL DE NAVEGACIÓN Y BOTÓN DE SALIDA ---
     st.sidebar.title("Navegación")
+    
+    # nombre real en la barra lateral
+    st.sidebar.markdown(f"👤 **Usuario:** {st.session_state.nombre_usuario}") 
+    
     if st.sidebar.button("🚪 Cerrar Sesión", use_container_width=True):
         st.session_state.logged_in = False
         st.rerun()
         
     st.sidebar.markdown("---")
 
-    # --- TODO TU SISTEMA HIS ORIGINAL EMPIEZA AQUÍ ---
+    # ---SISTEMA HIS ---
     st.title("🏥 Sistema de Control de Calidad y Errores HIS")
+    
+    # Saludo
+    st.markdown(f"👋 ¡Bienvenido(a), **{st.session_state.nombre_usuario}**! Qué bueno tenerte de vuelta.")
     st.markdown("Sube tu archivo Excel para identificar rápidamente las inconsistencias de digitación por profesional.")
 
     # Subida del archivo
@@ -247,16 +265,18 @@ else:
                             err_comun_prof = "N/A"
                         st.warning(f"💡 *Error más repetido:* {err_comun_prof}")
                     
-                    columnas_interes = ['F_Atención', 'Establecimiento', 'Descripcion_Ups', 'Tipo de Error Detectado', 'Paciente']
+                    columnas_interes = ['Lote', 'Pag', 'Reg', 'F_Atención', 'Descripcion_Ups', 'Tipo de Error Detectado', 'Paciente']
                     columnas_a_mostrar = [c for c in columnas_interes if c in df_prof.columns]
                     
+                    st.markdown("📋 **Ubicación del Registro para Corrección:**")
                     st.dataframe(df_prof[columnas_a_mostrar], use_container_width=True, hide_index=True)
+
             else:
                 st.warning("No se encontró la columna 'Atiende' para habilitar el buscador.")
 
             st.markdown("---")
 
-            # --- NUEVA SECCIÓN DE GRÁFICOS CON FILTRO POR ESTABLECIMIENTO ---
+            # ---SECCIÓN DE GRÁFICOS CON FILTRO POR ESTABLECIMIENTO ---
             st.subheader("📊 Análisis de Gráficos por Establecimiento")
             
             if 'Establecimiento' in df_filtrado.columns:
@@ -268,10 +288,12 @@ else:
                 
                 if est_seleccionado != "Ver Todos":
                     df_graficos = df_filtrado[df_filtrado['Establecimiento'] == est_seleccionado]
-                    st.info(f"Mostrando datos únicamente de: *{est_seleccionado}*")
+                    total_errores_est = len(df_graficos)
+                    st.error(f"🏥 **{est_seleccionado}** registra un total de **{total_errores_est:,}** errores.")
                 else:
                     df_graficos = df_filtrado.copy()
-                    st.info("Mostrando datos consolidados de *Todos* los establecimientos.")
+                    total_errores_est = len(df_graficos)
+                    st.info(f"Mostrando datos consolidados de **Todos** los establecimientos. Total: **{total_errores_est:,}** errores.")
             else:
                 df_graficos = df_filtrado.copy()
 
@@ -317,7 +339,7 @@ else:
 
             st.markdown("---")
             
-            # --- GRÁFICO EXTRA: ERRORES POR ESPECIALIDAD ---
+            # --- GRÁFICO: ERRORES POR ESPECIALIDAD ---
             st.subheader("🏢 Distribución de Errores por Área / Especialidad")
             if 'Descripcion_Ups' in df_graficos.columns and len(df_graficos) > 0:
                 df_up = df_graficos['Descripcion_Ups'].value_counts().reset_index()
